@@ -1,6 +1,8 @@
 <?php
 namespace FrUtility\Other;
 
+use FrUtility\Other\Csv;
+
 /**
  *
  * GETやPOSTでリクエストを行う
@@ -46,5 +48,55 @@ class Request
         //
         $result = $get_response ? json_decode($get_response, true) : '';
         return $result;
+    }
+
+    /**
+     * 指定されたURLにPOSTリクエストを送信します。
+     *
+     * @param string $url - リクエストを送信するURL
+     * @param callable $callback - CURLハンドルに対して設定を行うコールバック関数
+     * @return string - リクエストに対するレスポンス
+     */
+    public static function post(string $url, callable $callback): string
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        // 実行
+        $callback($ch);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
+    }
+
+    /**
+     * 指定されたCSVデータを含むPOSTリクエストを送信します。
+     *
+     * @param string $url - リクエストを送信するURL
+     * @param array $csvData - 送信するCSVデータ
+     * @return string - リクエストに対するレスポンス
+     */
+    public static function postCsvByArray(string $url, array $csvData): string
+    {
+        //
+        $csvPostFunction = function (string $tempPath) use ($url): string {
+            // CURLハンドルに対して設定を行うコールバック関数
+            $csvCallback = function ($ch) use ($tempPath) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+                    'file' => new \CURLFile($tempPath, 'text/csv', 'data.csv'),
+                ));
+            };
+
+            // POSTリクエストを送信し、レスポンスを返す
+            $response = self::post($url, $csvCallback);
+            return (string) $response;
+        };
+
+        $requested = Csv::executeByArray($csvData, $csvPostFunction);
+        return (string) $requested;
     }
 }
