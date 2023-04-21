@@ -7,7 +7,8 @@ use FrUtility\Extended\DictionaryKit;
  * Class Prefecturer
  * @package Prefecturer
  */
-class Prefecturer {
+class Prefecturer
+{
     public $list;
 
     /**
@@ -15,7 +16,8 @@ class Prefecturer {
      * 初期設定
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         // 扱いやすいリストにする
         $list = $this->getFlatList();
 
@@ -30,7 +32,8 @@ class Prefecturer {
      * @return array 内容はgetFlatList [  [ pref_en => "aomori", pref_jp => "青森", area_en => "tohoku", area_jp => "東北" ]  ]
      *
      */
-    public function getList(): array {
+    public function getList(): array
+    {
         return $this->list;
     }
 
@@ -40,7 +43,8 @@ class Prefecturer {
      * 事前にgroupしていた場合、地方とは別に分けられる。
      *
      */
-    public function getGroupList() {
+    public function getGroupList()
+    {
         $list = $this->list;
 
         //
@@ -83,7 +87,8 @@ class Prefecturer {
      *
      * @return object $this ->sort()
      */
-    public function where(array $needle_prefectures, string $key = 'pref_en'): object {
+    public function where(array $needle_prefectures, string $key = 'pref_en'): object
+    {
         // 指定した値をもつ連想配列のみで、構成する
         $this->list = array_filter($this->list, function ($data) use ($needle_prefectures, $key) {
             return in_array($data[$key] ?? '', $needle_prefectures);
@@ -101,7 +106,8 @@ class Prefecturer {
      * @return object $this ->where()
      *
      */
-    public function sort(array $value_list, string $key = 'pref_en'): object {
+    public function sort(array $value_list, string $key = 'pref_en'): object
+    {
         $this->list = DictionaryKit::sort_by_values($this->list, $key, $value_list);
         return $this;
     }
@@ -117,7 +123,8 @@ class Prefecturer {
      * @return object $this ->getGroupList
      *
      */
-    public function groups($name, $prefs, ...$continue): object {
+    public function groups($name, $prefs, ...$continue): object
+    {
         $params = array_merge(
             [$name, $prefs],
             $continue
@@ -145,7 +152,8 @@ class Prefecturer {
      * @return object $this ->getGroupList
      *
      */
-    public function group(string $group_name, array $needle_prefs): object {
+    public function group(string $group_name, array $needle_prefs): object
+    {
         $this->list = array_map(function ($data) use ($group_name, $needle_prefs) {
             $_pref = $data['pref_en'] ?? '';
             if (!in_array($_pref, $needle_prefs)) {
@@ -163,7 +171,8 @@ class Prefecturer {
      * 見にくいが扱いやすい
      *
      */
-    private function getFlatList(): array {
+    private function getFlatList(): array
+    {
         $result = [];
         foreach ($this->readable_list as $area) {
             foreach ($area['prefs'] ?? [] as $pref) {

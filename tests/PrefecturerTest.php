@@ -4,7 +4,8 @@ use PHPUnit\Framework\TestCase;
 use FrUtility\Table\Prefecturer;
 use FrUtility\Extended\ArrayKit;
 
-class PrefecturerTest extends TestCase {
+class PrefecturerTest extends TestCase
+{
     // protected function setUp() :void {
     // }
 
@@ -19,7 +20,8 @@ class PrefecturerTest extends TestCase {
      * @return array 日本語の都道府県リスト 例: [ "東京", "沖縄" ]
      *
      */
-    public function getListJP(array $order = [], array $needle = [], string $key = 'pref_jp'): array {
+    public function getListJP(array $order = [], array $needle = [], string $key = 'pref_jp'): array
+    {
         $Prefecturer = new Prefecturer();
 
         if ($order) {
@@ -42,7 +44,8 @@ class PrefecturerTest extends TestCase {
      * 通常の都道府県取得処理
      *
      */
-    public function testGetList() {
+    public function testGetList()
+    {
         /***
          *
          * 並び替え
@@ -115,7 +118,8 @@ class PrefecturerTest extends TestCase {
      *
      *
      */
-    public function testGetGroupList() {
+    public function testGetGroupList()
+    {
         $Prefecturer = new Prefecturer();
 
         //

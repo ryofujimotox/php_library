@@ -11,7 +11,8 @@ namespace FrUtility\Other;
  * @var int $expire_left 残り有効日数
  *
  */
-class Ssl {
+class Ssl
+{
     public $detail;// SSL情報
     public $status;// live | dead | error
     public $expire_date;// 有効期限
@@ -25,7 +26,8 @@ class Ssl {
      * @param int $timeout_seconds SSLチェック時のタイムアウト秒数
      *
      */
-    public function __construct(string $domain, int $timeout_seconds = 3) {
+    public function __construct(string $domain, int $timeout_seconds = 3)
+    {
         $this->timeout_seconds = $timeout_seconds;
 
         //
@@ -45,7 +47,8 @@ class Ssl {
      * @return string status
      *
      */
-    private function getStatus() {
+    private function getStatus()
+    {
         // 有効期限がある場合
         if ($this->expire_date) {
             if ($this->expire_left > 0) {
@@ -81,7 +84,8 @@ class Ssl {
      * @return string SSL情報の文字列
      *
      */
-    private function getSslDetail(string $url): string {
+    private function getSslDetail(string $url): string
+    {
         // SSL状態の取得
         $fp = tmpfile();
         $ch = curl_init();
@@ -111,7 +115,8 @@ class Ssl {
      * @return DateTime|null 有効期限
      *
      */
-    private function getExpireDate(string $detail): ?\DateTime {
+    private function getExpireDate(string $detail): ?\DateTime
+    {
         // 有効期限を抜き出す
         preg_match("/expire date:(.*?)\n/", $detail, $matches);
         $date = $matches[1] ?? '';
@@ -132,7 +137,8 @@ class Ssl {
      * @return int 差分の日数
      *
      */
-    private function get_days_since_today(\DateTime $date): int {
+    private function get_days_since_today(\DateTime $date): int
+    {
         $now = new \DateTime();
         $left = $now->diff($date);
         $left = (int) $left->format('%R%a');

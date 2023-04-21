@@ -3,8 +3,10 @@
 use PHPUnit\Framework\TestCase;
 use FrUtility\Extended\ArrayKit;
 
-class ArrayKitTest extends TestCase {
-    public function testCusSliceFirla() {
+class ArrayKitTest extends TestCase
+{
+    public function testCusSliceFirla()
+    {
         $array = [1, 2, 3, 4, 5];
         $first = 1;
         $last = 2;

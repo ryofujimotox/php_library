@@ -11,7 +11,8 @@ namespace FrUtility\Other;
  * @var int $expire_left 残り有効日数
  *
  */
-class Url {
+class Url
+{
     /**
      *
      * 適当なURLからドメインを抜き出す
@@ -20,7 +21,8 @@ class Url {
      * @return string 〇〇.com
      *
      */
-    public static function getDomain(string $url): string {
+    public static function getDomain(string $url): string
+    {
         $url_split = parse_url($url);
         $host = ($url_split['host'] ?? '');
         // $host = preg_replace('/^www\./', '', $host);
