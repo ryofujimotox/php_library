@@ -16,12 +16,19 @@ class Request
      *
      * @param string $url URL
      * @param array $params GETパラメーター　["key" => "value"]
+     * @param array $options
      *
      * @return mixed json_encoded
      *
      */
-    public static function get(string $url, array $params = [])
+    public static function get(string $url, array $params = [], array $options = [])
     {
+        $options = array_merge(
+            [
+                'returnJson' => true
+            ],
+            $options,
+        );
         // GETパラメータ付与
         if ($params) {
             $query_string = http_build_query($params);
@@ -45,8 +52,14 @@ class Request
         // 5. curlの処理を終了 => コネクションを切断
         curl_close($get_curl);
 
-        //
-        $result = $get_response ? json_decode($get_response, true) : '';
+        // 返却
+        $result = $get_response;
+        if (!$result) {
+            return $result;
+        }
+        if ($options['returnJson']) {
+            return json_decode($result, true);
+        }
         return $result;
     }
 
