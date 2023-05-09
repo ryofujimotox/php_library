@@ -4,6 +4,33 @@ namespace FrUtility\Other;
 class Csv
 {
     /**
+     * CSVファイルを読み込んで、ヘッダー行とデータ行を配列で返す。
+     *
+     * @param string $path CSVファイルのパス
+     * @return array ヘッダー行とデータ行を含む連想配列
+     */
+    public function getCsvArray(string $path): array
+    {
+        $csvContent = file_get_contents($path);
+        // 改行で分割して配列にする
+        $rows = explode(PHP_EOL, $csvContent);
+
+        $csvData = [];
+        foreach ($rows as $key => $row) {
+            if (!$row) {
+                // 空行をスキップ
+                continue;
+            }
+            $csvData[] = str_getcsv($row);
+        }
+
+        return [
+            'header' => $csvData[0] ?? [], // ヘッダー行
+            'data' => array_slice($csvData, 1), // データ行
+        ];
+    }
+
+    /**
      * CSVデータを一時ファイルに保存して、指定された関数を実行する。
      * @param array $csv_data CSVデータ
      * @param callable $callback 実行する関数。引数にCSV一時ファイルのパスをとる必要がある。 (tmp_file:string) => (){}
