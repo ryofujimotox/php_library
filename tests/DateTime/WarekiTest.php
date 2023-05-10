@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use FrUtility\Table\DateWareki;
+use FrUtility\DateTime\DateTime;
 
-class DateWarekiTest extends TestCase
+class WarekiTest extends TestCase
 {
     /**
      * 正常系テスト用データプロバイダ
@@ -32,35 +32,34 @@ class DateWarekiTest extends TestCase
     }
 
     /**
-     * DateWarekiクラスのmakeメソッドの正常系テスト
+     * Warekiクラスのmakeメソッドの正常系テスト
      *
      * @dataProvider successWarekiProvider
      * @param string $date 日付文字列
      * @param string $wareki 和暦表記
      */
-    public function testDateWarekiFormat(string $date, string $wareki, string $en_wareki, int $year_of_era): void
+    public function testWarekiFormat(string $date, string $wareki, string $en_wareki, int $year_of_era): void
     {
-        $datetime = new DateTime($date);
-        $DateWareki = new DateWareki($datetime);
-        $currentWareki = $DateWareki->format('KX年');
-        $era = $DateWareki->getEra();
+        $Wareki = new DateTime($date);
+        $currentWareki = $Wareki->format('KX年');
+        $era = $Wareki->getEra();
 
         //
         $this->assertEquals("{$wareki}" . sprintf('%02d', $year_of_era) . '年', $currentWareki);
         $this->assertEquals($era['en_abbr'], $en_wareki);
     }
+
     /**
-     * DateWarekiクラスのmakeメソッドのエラー系テスト
+     * Warekiクラスのmakeメソッドのエラー系テスト
      *
      * @dataProvider invalidWarekiProvider
      * @param string $date 日付文字列
      */
-    public function testDateWarekiFormatInvalid(string $date): void
+    public function testWarekiFormatInvalid(string $date): void
     {
         // 例外が発生することをテスト
-        $this->expectException(Exception::class);
-        $datetime = new DateTime($date);
-        $DateWareki = new DateWareki($datetime);
-        $currentWareki = $DateWareki->format('KX年');
+        $Wareki = new DateTime($date);
+        $currentWareki = $Wareki->format('KX年');
+        $this->assertEquals('00年', $currentWareki);
     }
 }

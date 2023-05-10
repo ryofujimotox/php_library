@@ -1,9 +1,8 @@
 <?php
 namespace FrUtility\Other;
 
-use \DateTime;
 use \Exception;
-use FrUtility\Extended\DateTimeKit;
+use FrUtility\DateTime\DateTime;
 
 class Filer
 {
@@ -70,7 +69,8 @@ class Filer
             throw new Exception('更新日時を取得できませんでした');
         }
 
-        $dateTime = DateTimeKit::createFromTimestamp($lastModified, $timezone);
+        $dateTime = new DateTime();
+        $dateTime = $dateTime->setSafeTimestamp($lastModified, $timezone);
         return $dateTime;
     }
 
