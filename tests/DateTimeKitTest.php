@@ -3,7 +3,7 @@
 use FrUtility\Extended\DateTimeKit;
 use PHPUnit\Framework\TestCase;
 
-class DateTimeTest extends TestCase
+class DateTimeKitTest extends TestCase
 {
     /**
      * createFromTimestamp() 関数の正常系テスト
@@ -29,7 +29,7 @@ class DateTimeTest extends TestCase
     {
         // タイムゾーンを指定して createFromTimestamp() 関数を呼び出す
         $this->expectException(TypeError::class);
-        $dateTime = DateTimeKit::createFromTimestamp($timestamp, "Asia/Tokyo");
+        $dateTime = DateTimeKit::createFromTimestamp($timestamp, 'Asia/Tokyo');
     }
 
     /**
