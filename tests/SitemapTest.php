@@ -2,7 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 use FrUtility\Other\Sitemap;
-use FrUtility\Other\Filer;
 
 class SitemapTest extends TestCase
 {
@@ -14,24 +13,27 @@ class SitemapTest extends TestCase
     public function testSitemap()
     {
         // サイトマップ.xmlを生成する
-        $url = 'https://ryo1999.com';
-        $filepath = '/sitemap/stmp.xml';
-        //
-
-        $root = dirname(dirname(__FILE__)) . '/public/';
+        $siteURL = 'https://ryo1999.com';
+        $rootDir = dirname(dirname(__FILE__)) . '/public/';
+        $filePath = '/sitemap/stmp.xml';
         $data = [
             [
-                'path' => '/',
+                'path' => '/dwa',
+                'date' => '1999-03-29'
+            ],
+            [
+                'path' => '/test',
                 'date' => '1999-03-29'
             ]
         ];
-        $Sitemap = new Sitemap();
-        $isMake = $Sitemap->create($url, $data, $root, $filepath);
+        $Sitemap = new Sitemap($siteURL, $rootDir, $filePath);
+
+        $isMake = $Sitemap->create($data, false);
 
         //
         $this->assertTrue($isMake);
 
         // 不要ディレクトリの削除
-        Filer::rm($root);
+        $Sitemap->remove();
     }
 }
