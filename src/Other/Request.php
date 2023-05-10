@@ -16,7 +16,7 @@ class Request
      *
      * @param string $url URL
      * @param array $params GETパラメーター　["key" => "value"]
-     * @param array $options
+     * @param array $options ["returnJson" => true]
      *
      * @return mixed json_encoded
      *
