@@ -70,22 +70,27 @@ class ArrayKit
     }
 
     /**
-    *
-    * 指定した値通りに並び替える
-    * インデックスを維持しない。 してもいいかも
-    *
-    * @param array $array 配列 ( ["hokkaido", "aomori",,,] )
-    * @param array $sticky 配列に含まれている値 ( ["tokyo", "aomori"] )
-    *
-    * @return array stickyを上に持っていった配列 ( ["tokyo", "aomori", "hokkaido",,,] )
-    *
-    */
-    public static function sort_by_values(array $array, array $sticky): array
+     * $array1の要素を$array2の値の順序に並び替える
+     * indexを初期化する。
+     *
+     * @param array $array1   並び替える元の配列 ["x",'a', 'b', 'c', 'b', 'a']
+     * @param array $array2   配列の値を参照する順序を示す配列 ['b', 'a', 'c']
+     * @return array 並び替えられた配列 ['b', 'b', 'a', 'a', 'c','x']
+     */
+    public static function sort_by_values(array $array1, array $array2): array
     {
-        $_diff = array_diff($array, $sticky);
-        $_intersect = array_intersect($sticky, $array);
-        $merge = array_merge($_intersect, $_diff);
-        return $merge;
+        $order = array_flip($array2);
+        uksort($array1, function ($a, $b) use ($order, $array1) {
+            $aVal = $order[$array1[$a]] ?? PHP_INT_MAX;
+            $bVal = $order[$array1[$b]] ?? PHP_INT_MAX;
+
+            if ($aVal !== $bVal) {
+                return $aVal - $bVal;
+            }
+            // $aValと$bValが同じ場合、$aと$bの元の順序を維持する
+            return $a - $b;
+        });
+        return array_values($array1);
     }
 
     /**
