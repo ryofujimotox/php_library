@@ -2,16 +2,10 @@
 
 1. write composer.json
 
-``` json
+```json
 "require": {
     "ryofujimotox/php_library": "^1"
-},
-"repositories": [
-    {
-    "type": "git",
-    "url": "https://github.com/ryofujimotox/php_library"
-    }
-],
+}
 ```
 
 2. install
@@ -22,7 +16,7 @@ composer install
 
 3. use
 
-``` php
+```php
 // todo FW使ってる場合はいらない
 require_once 'vendor/autoload.php';
 
@@ -46,10 +40,6 @@ exit;
 ```
 composer update
 ```
-
-
-
-
 
 # Tests
 
