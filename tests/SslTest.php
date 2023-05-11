@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use FrUtility\Other\Ssl;
-use FrUtility\Other\Url;
+use FrUtility\Url\Utility as UrlUtil;
 
 class SslTest extends TestCase
 {
@@ -14,7 +14,9 @@ class SslTest extends TestCase
     public function testSsl()
     {
         $url = 'https://ryo1999.com';
-        $domain = Url::getDomain($url);
+
+        $domain = UrlUtil::getDomain($url);
+
         $ssl = new Ssl($domain);
 
         $this->assertSame('live', $ssl->status);

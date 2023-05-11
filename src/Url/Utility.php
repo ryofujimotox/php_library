@@ -1,17 +1,7 @@
 <?php
-namespace FrUtility\Other;
+namespace FrUtility\Url;
 
-/**
- *
- * SSL状態-有効期限等の取得
- *
- * @var string $detail SSL情報
- * @var string $status live | dead | error
- * @var DateTime|null $expire_date 有効期限
- * @var int $expire_left 残り有効日数
- *
- */
-class Url
+class Utility
 {
     /**
      *

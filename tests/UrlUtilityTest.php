@@ -2,9 +2,9 @@
 
 use FrUtility\Extended\ArrayKit;
 use PHPUnit\Framework\TestCase;
-use FrUtility\Other\Url;
+use FrUtility\Url\Utility as UrlUtil;
 
-class UrlTest extends TestCase
+class UrlUtilityTest extends TestCase
 {
     /**
      * GETパラメータを再構築できているか確認用のデータプロパイダ
@@ -38,7 +38,7 @@ class UrlTest extends TestCase
      */
     public function testUrlQuery(array $baseParams, array $updateParams, array $wantParams)
     {
-        $newParams = Url::getParams($this->getUrl($baseParams), $updateParams);
+        $newParams = UrlUtil::getParams($this->getUrl($baseParams), $updateParams);
         $matched = ArrayKit::are_match($newParams, $wantParams);
         $this->assertTrue($matched);
     }
@@ -62,38 +62,38 @@ class UrlTest extends TestCase
          *
          */
         $_base = $base;
-        $url = Url::modifyParams($_base, $updateParams);
+        $url = UrlUtil::modifyParams($_base, $updateParams);
         $this->assertSame("{$_base}?{$add}", $url);
         //　編集 - 削除
-        $url = Url::modifyParams($url, ['test' => null]);
+        $url = UrlUtil::modifyParams($url, ['test' => null]);
         $this->assertSame("{$_base}?OK=OK", $url);
 
         /**
          *
          */
         $_base = $base . '?';
-        $url = Url::modifyParams($_base, $updateParams);
+        $url = UrlUtil::modifyParams($_base, $updateParams);
         $this->assertSame("{$_base}{$add}", $url);
         // 編集 - 書き換え
-        $url = Url::modifyParams($url, ['OK' => 'NO']);
+        $url = UrlUtil::modifyParams($url, ['OK' => 'NO']);
         $this->assertSame("{$_base}test=test&OK=NO", $url);
 
         /**
          *
          */
         $_base = $base . '/test/';
-        $url = Url::modifyParams($_base, $updateParams);
+        $url = UrlUtil::modifyParams($_base, $updateParams);
         $this->assertSame("{$_base}?{$add}", $url);
         // 編集 - 全部削除
-        $url = Url::modifyParams($url, ['test' => null, 'OK' => null]);
+        $url = UrlUtil::modifyParams($url, ['test' => null, 'OK' => null]);
         $this->assertSame("{$_base}", $url);
 
         //
         $_base = $base . '/test/?';
-        $url = Url::modifyParams($_base, $updateParams);
+        $url = UrlUtil::modifyParams($_base, $updateParams);
         $this->assertSame("{$_base}{$add}", $url);
         // 編集 - 追加
-        $url = Url::modifyParams($url, ['test2' => 'test', 'OK2' => 'OK2']);
+        $url = UrlUtil::modifyParams($url, ['test2' => 'test', 'OK2' => 'OK2']);
         $this->assertSame("{$_base}test=test&OK=OK&test2=test&OK2=OK2", $url);
     }
 
@@ -103,6 +103,6 @@ class UrlTest extends TestCase
     private function getUrl($param = [])
     {
         $base = 'https://ryo1999.com';
-        return Url::modifyParams($base, $param);
+        return UrlUtil::modifyParams($base, $param);
     }
 }
