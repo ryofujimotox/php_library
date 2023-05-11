@@ -5,20 +5,7 @@ use FrUtility\Other\Filer;
 class LastModifiedTest extends TestCase
 {
     /**
-     * 正常系テスト用データプロバイダ
-     * タイムゾーン毎に異なる日時のフォーマットをテストする
-     */
-    public function safeProvider(): array
-    {
-        return [
-            [1683766360, '2023-05-11 01:52:40', 'Europe/London'],
-            [1683766360, '2023-05-11 09:52:40', 'Asia/Tokyo'],
-            [1683766360, '2023-05-10 20:52:40', 'America/New_York']
-        ];
-    }
-
-    /**
-     * @dataProvider safeProvider
+     * @dataProvider TestProviders\TimestampProvider::safeProvider
      */
     public function testGetLastModified正常系(int $timestamp, string $expectedDatetime, string $timezone): void
     {

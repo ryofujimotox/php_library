@@ -22,5 +22,10 @@
     "psr-4": {
       "FrUtility\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TestProviders\\": "tests/Providers"
+    }
   }
 }
