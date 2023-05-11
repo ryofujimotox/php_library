@@ -1,6 +1,8 @@
 <?php
 namespace FrUtility\Other;
 
+use \DateTime;
+
 /**
  *
  * SSL状態-有効期限等の取得
@@ -115,7 +117,7 @@ class Ssl
      * @return DateTime|null 有効期限
      *
      */
-    private function getExpireDate(string $detail): ?\DateTime
+    private function getExpireDate(string $detail): ?DateTime
     {
         // 有効期限を抜き出す
         preg_match("/expire date:(.*?)\n/", $detail, $matches);
@@ -125,7 +127,7 @@ class Ssl
         }
 
         //
-        $date = new \DateTime($date);
+        $date = new DateTime($date);
         return $date;
     }
 
@@ -137,9 +139,9 @@ class Ssl
      * @return int 差分の日数
      *
      */
-    private function get_days_since_today(\DateTime $date): int
+    private function get_days_since_today(DateTime $date): int
     {
-        $now = new \DateTime();
+        $now = new DateTime();
         $left = $now->diff($date);
         $left = (int) $left->format('%R%a');
         return $left;
