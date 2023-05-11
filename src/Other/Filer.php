@@ -3,6 +3,7 @@ namespace FrUtility\Other;
 
 use \Exception;
 use FrUtility\DateTime\DateTime;
+use FrUtility\DateTime\DateTimeFromTimestamp;
 
 class Filer
 {
@@ -34,9 +35,6 @@ class Filer
      */
     public static function isFileUpdatedWithinSeconds(string $filePath, int $seconds = 1, string $timezone = 'Asia/Tokyo'): bool
     {
-        // タイムゾーンを設定
-        date_default_timezone_set($timezone);
-
         // 現在時刻のDateTimeオブジェクトを取得
         $currentTime = new DateTime();
 
@@ -60,6 +58,9 @@ class Filer
      */
     public static function getLastModified(string $filePath, string $timezone = 'Asia/Tokyo'): DateTime
     {
+        // タイムゾーンを設定
+        date_default_timezone_set($timezone);
+
         if (!file_exists($filePath)) {
             throw new Exception('ファイルが存在しません');
         }
@@ -69,8 +70,7 @@ class Filer
             throw new Exception('更新日時を取得できませんでした');
         }
 
-        $dateTime = new DateTime();
-        $dateTime = $dateTime->setSafeTimestamp($lastModified, $timezone);
+        $dateTime = new DateTimeFromTimestamp($lastModified, $timezone);
         return $dateTime;
     }
 
