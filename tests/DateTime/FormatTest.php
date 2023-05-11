@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use FrUtility\DateTime\DateTime;
 
-class WarekiTest extends TestCase
+class FormatTest extends TestCase
 {
     /**
      * 正常系テスト用データプロバイダ
@@ -13,9 +13,9 @@ class WarekiTest extends TestCase
     public function successWarekiProvider(): array
     {
         return [
-            ['2030-01-01', '令和', 'R', 12], // 未来
-            ['1989-01-08', '平成', 'H', 1], // 過去
-            ['1926-12-24', '大正', 'T', 15]// 過去
+            ['2030-01-01', '令和12年', 'KX年'], // 未来
+            ['1989-01-08', '平成01年', 'KX年'], // 過去
+            ['1926-12-24', '大正15年金曜日', 'KX年W曜日'], // 過去
         ];
     }
 
@@ -32,21 +32,20 @@ class WarekiTest extends TestCase
     }
 
     /**
-     * Warekiクラスのmakeメソッドの正常系テスト
+     * formatの正常系テスト
      *
      * @dataProvider successWarekiProvider
      * @param string $date 日付文字列
-     * @param string $wareki 和暦表記
+     * @param string $result 期待する値
+     * @param string $format フォーマット
      */
-    public function testWarekiFormat(string $date, string $wareki, string $en_wareki, int $year_of_era): void
+    public function testFormat正常系(string $date, string $result, string $format): void
     {
         $Wareki = new DateTime($date);
-        $currentWareki = $Wareki->format('KX年');
-        $era = $Wareki->getEra();
+        $current = $Wareki->format($format);
 
         //
-        $this->assertEquals("{$wareki}" . sprintf('%02d', $year_of_era) . '年', $currentWareki);
-        $this->assertEquals($era['en_abbr'], $en_wareki);
+        $this->assertEquals($result, $current);
     }
 
     /**
