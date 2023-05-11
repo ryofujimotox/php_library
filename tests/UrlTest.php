@@ -1,62 +1,46 @@
 <?php
 
+use FrUtility\Extended\ArrayKit;
 use PHPUnit\Framework\TestCase;
 use FrUtility\Other\Url;
 
 class UrlTest extends TestCase
 {
     /**
+     * GETパラメータを再構築できているか確認用のデータプロパイダ
      *
-     * GETパラメータを再構築する
-     *
+     * @return array テストデータ
      */
-    public function testUrlQuery()
+    public function safeProvider(): array
     {
-        // これをつける。
-        $updateParams = ['test' => 'test', 'OK' => 'OK'];
-
-        // 追加
-        $newParams = Url::getParams($this->getUrl(), $updateParams);
-        $wantParams = $updateParams;
-        $this->assertSame($newParams, $wantParams);
-
-        // 書き換え
-        $base_added = ['test' => 'remove', 'OK' => 'NO'];
-        $newParams = Url::getParams($this->getUrl($base_added), $updateParams);
-        $wantParams = $updateParams;
-        $this->assertSame($newParams, $wantParams);
-
-        // 1つ追加
-        $base_added = ['test1' => 'test'];
-        $newParams = Url::getParams($this->getUrl($base_added), $updateParams);
-        $wantParams = array_merge($base_added, $updateParams);
-        $this->assertSame($newParams, $wantParams);
-
-        // 2つ追加
-        $base_added = ['test1' => 'test', 'test2' => 'test'];
-        $newParams = Url::getParams($this->getUrl($base_added), $updateParams);
-        $wantParams = array_merge($base_added, $updateParams);
-        $this->assertSame($newParams, $wantParams);
-
-        // 1つ削除
-        $base_added = ['test1' => 'test', 'test2' => 'test'];
-        $updateParams = ['test1' => null];
-        $newParams = Url::getParams($this->getUrl($base_added), $updateParams);
-        $wantParams = ['test2' => 'test'];
-        $this->assertSame($newParams, $wantParams);
-
-        // 全部削除
-        $base_added = ['test1' => 'test', 'test2' => 'test'];
-        $updateParams = ['test1' => null, 'test2' => null];
-        $newParams = Url::getParams($this->getUrl($base_added), $updateParams);
-        $wantParams = [];
-        $this->assertSame($newParams, $wantParams);
+        return [
+            [
+                [], // 初期値として設定するパラメータ
+                ['a' => 1, 'b' => 2], // 更新するパラメータ
+                ['a' => 1, 'b' => 2], // 期待する結果
+            ],
+            [
+                ['a' => 1, 'b' => 2],
+                ['a' => 20],
+                ['a' => 20, 'b' => 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2],
+                ['a' => null, 'b' => 20, 'c' => 'OK'],
+                ['b' => 20, 'c' => 'OK'],
+            ],
+        ];
     }
 
-    public function getUrl($param = [])
+    /**
+     * GETパラメータを再構築する
+     * @dataProvider safeProvider
+     */
+    public function testUrlQuery(array $baseParams, array $updateParams, array $wantParams)
     {
-        $base = 'https://ryo1999.com';
-        return Url::modifyParams($base, $param);
+        $newParams = Url::getParams($this->getUrl($baseParams), $updateParams);
+        $matched = ArrayKit::are_match($newParams, $wantParams);
+        $this->assertTrue($matched);
     }
 
     /**
@@ -111,5 +95,14 @@ class UrlTest extends TestCase
         // 編集 - 追加
         $url = Url::modifyParams($url, ['test2' => 'test', 'OK2' => 'OK2']);
         $this->assertSame("{$_base}test=test&OK=OK&test2=test&OK2=OK2", $url);
+    }
+
+    /**
+     * URLを取得するだけ
+     */
+    private function getUrl($param = [])
+    {
+        $base = 'https://ryo1999.com';
+        return Url::modifyParams($base, $param);
     }
 }

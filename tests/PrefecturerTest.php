@@ -6,109 +6,31 @@ use FrUtility\Extended\ArrayKit;
 
 class PrefecturerTest extends TestCase
 {
-    // protected function setUp() :void {
-    // }
-
     /**
+     * 並び替えた後の全リストから、最初と最後を確認するためのデータプロバイダ
      *
-     * リスト取得
-     *
-     * @param array $order 指定した都道府県の順番で取得する 例: [ "tokyo", "aomori", "okinawa" ]
-     * @param array $needle 指定した都道府県のみを取得する 例: [ "okinawa", "tokyo" ]
-     * @param string $key キー
-     *
-     * @return array 日本語の都道府県リスト 例: [ "東京", "沖縄" ]
-     *
+     * @return array テストデータ
      */
-    public function getListJP(array $order = [], array $needle = [], string $key = 'pref_jp'): array
+    public function safityOrderProvider(): array
     {
-        $Prefecturer = new Prefecturer();
-
-        if ($order) {
-            $Prefecturer->sort($order);
-        }
-
-        if ($needle) {
-            $Prefecturer->where($needle);
-        }
-
-        $list = $Prefecturer->getList();
-
-        // 指定のキーのみで再構築
-        $list_jp = array_column($list, $key);
-        return $list_jp;
+        return [
+            [['tokyo', 'aomori'], ['東京都', '青森県', '北海道'], ['沖縄県']],
+            [['tokyo', 'okinawa', 'aomori'],  ['東京都', '沖縄県', '青森県', '北海道'],  ['鹿児島県']]
+        ];
     }
 
     /**
+     * 絞り込みが正しく動作していることを確認するためのデータプロバイダ
      *
-     * 通常の都道府県取得処理
-     *
+     * @return array テストデータ
      */
-    public function testGetList()
+    public function safityNeedleProvider(): array
     {
-        /***
-         *
-         * 並び替え
-         *
-         */
-        // 東京 -> 青森 -> 北海道 ,,,の順に並べる。　
-        $order = ['tokyo', 'aomori'];
-        $want = [
-            ['東京都', '青森県', '北海道'],
-            ['沖縄県'],
+        return [
+            [['tokyo'], ['東京都']],
+            [['niigata', 'tokyo'], ['東京都', '新潟県']],
+            [['tochigi', 'kagoshima', 'yamaguchi', 'ibaraki'], ['茨城県', '栃木県', '山口県', '鹿児島県']]
         ];
-        $list = $this->getListJP($order);
-        // 最初と最後を確認する。
-        $first_end = ArrayKit::slice_firla($list, count($want[0]), count($want[1]));
-        $want_first_end = ArrayKit::flatten($want);
-        $this->assertSame($first_end, $want_first_end);
-
-        // 沖縄 -> 青森 -> 北海道 ,,,の順に並べる。　
-        $order = ['tokyo', 'okinawa', 'aomori'];
-        $want = [
-            ['東京都', '沖縄県', '青森県', '北海道'],
-            ['鹿児島県'],
-        ];
-        $list = $this->getListJP($order);
-        // 最初と最後を確認する。
-        $first_end = ArrayKit::slice_firla($list, count($want[0]), count($want[1]));
-        $want_first_end = ArrayKit::flatten($want);
-        $this->assertSame($first_end, $want_first_end);
-
-        /***
-         *
-         * 絞り込み
-         *
-         */
-        // 1つだけに絞り込む
-        $needle = ['tokyo'];
-        $want = ['東京都'];
-        $list = $this->getListJP([], $needle);
-        $this->assertSame($list, ArrayKit::flatten($want));
-
-        // 2つ。　順番は変わらない
-        $needle = ['niigata', 'tokyo'];
-        $want = ['東京都', '新潟県'];
-        $list = $this->getListJP([], $needle);
-        $this->assertSame($list, ArrayKit::flatten($want));
-
-        // 3つ以上。 　順番は変わらない
-        $needle = ['tochigi', 'kagoshima', 'yamaguchi', 'ibaraki'];
-        $want = ['茨城県', '栃木県', '山口県', '鹿児島県'];
-        $list = $this->getListJP([], $needle);
-        $this->assertSame($list, ArrayKit::flatten($want));
-
-        /**
-         *
-         * 並び替え + 絞り込み
-         *
-         */
-        // 青森 -> 東京 -> 北海道 の順番で +宮城も取得する
-        $order = ['aomori', 'tokyo', 'hokkaido'];
-        $needle = ['aomori', 'miyagi', 'tokyo', 'hokkaido'];
-        $want = ['青森県', '東京都', '北海道', '宮城県'];
-        $list = $this->getListJP($order, $needle);
-        $this->assertSame($list, ArrayKit::flatten($want));
     }
 
     /**
@@ -151,5 +73,76 @@ class PrefecturerTest extends TestCase
             $this->assertTrue($group_list[$_index]['name'] == $_want['name'], '正しいグループ名ではありません: ' . $_want['name']);
             $this->assertSame($current_prefs, $_want['prefs'], 'グループメンバーが正しくありません: ' . $_want['name']);
         }
+    }
+
+    /**
+     * 並び順
+     * @dataProvider safityOrderProvider
+     */
+    public function testGetListOrder($order, $currentFirst, $currentLast)
+    {
+        // 東京 -> 青森 -> 北海道 ,,,の順に並べる。　
+        $want = [$currentFirst, $currentLast];
+        $list = $this->getListJP($order);
+
+        // 最初と最後を確認する。
+        $first_end = ArrayKit::slice_firla($list, count($want[0]), count($want[1]));
+        $want_first_end = ArrayKit::flatten($want);
+        $this->assertSame($first_end, $want_first_end);
+    }
+
+    /**
+     * 絞り込み
+     * @dataProvider safityNeedleProvider
+     */
+    public function testGetListNeedle($needle, $want)
+    {
+        $list = $this->getListJP([], $needle);
+        $this->assertSame($list, ArrayKit::flatten($want));
+    }
+
+    /**
+     *
+     * 並び替え + 絞り込み
+     *
+     */
+    public function testGetList()
+    {
+        // 青森 -> 東京 -> 北海道 の順番で +宮城も取得する
+        $order = ['aomori', 'tokyo', 'hokkaido'];
+        $needle = ['aomori', 'miyagi', 'tokyo', 'hokkaido'];
+        $want = ['青森県', '東京都', '北海道', '宮城県'];
+        $list = $this->getListJP($order, $needle);
+        $this->assertSame($list, ArrayKit::flatten($want));
+    }
+
+    /**
+     *
+     * リスト取得
+     *
+     * @param array $order 指定した都道府県の順番で取得する 例: [ "tokyo", "aomori", "okinawa" ]
+     * @param array $needle 指定した都道府県のみを取得する 例: [ "okinawa", "tokyo" ]
+     * @param string $key キー
+     *
+     * @return array 日本語の都道府県リスト 例: [ "東京", "沖縄" ]
+     *
+     */
+    public function getListJP(array $order = [], array $needle = [], string $key = 'pref_jp'): array
+    {
+        $Prefecturer = new Prefecturer();
+
+        if ($order) {
+            $Prefecturer->sort($order);
+        }
+
+        if ($needle) {
+            $Prefecturer->where($needle);
+        }
+
+        $list = $Prefecturer->getList();
+
+        // 指定のキーのみで再構築
+        $list_jp = array_column($list, $key);
+        return $list_jp;
     }
 }
