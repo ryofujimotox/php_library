@@ -3,6 +3,7 @@ namespace FrUtility\DateTime;
 
 use FrUtility\Extended\TextKit;
 use \DateTime as BaseDateTime;
+use DateTimeInterface;
 
 class Wareki
 {
@@ -10,26 +11,14 @@ class Wareki
      * 元号を考慮した日付フォーマットを行う
      *
      * @param string $format フォーマット指定文字列
-     * @param \DateTimeInterface $datetime 対象の日付と時刻を表す DateTime オブジェクト
+     * @param DateTimeInterface $datetime 対象の日付と時刻を表す DateTime オブジェクト
      * @return string フォーマットされた文字列
      */
-    public static function formatWareki(string $format, \DateTimeInterface $datetime): string
+    public static function format(string $format, DateTimeInterface $datetime): string
     {
         // 日付に対応する元号情報を取得
-        $era = self::getEraFromDatetime($datetime);
-
-        // デフォルトのパラメータを設定
-        $params = [
-            'K' => '', // 元号名(漢字)
-            'k' => '', // 元号名(略字)
-            'Q' => '', // 英語表記の元号名
-            'q' => '', // 英語略表記の元号名
-            'x' => '0', // 元号における年数
-            'X' => '00', // 元号における年数(2桁0詰め)
-        ];
-
+        $era = self::getEra($datetime);
         if ($era) {
-            // 元号がある場合はパラメータを更新
             $year_of_era = $datetime->format('Y') - $era['start_date']->format('Y') + 1;
             $params = [
                 'K' => $era['jp'], // 元号名(漢字)
@@ -39,19 +28,28 @@ class Wareki
                 'x' => $year_of_era, // 元号における年数
                 'X' => sprintf('%02d', $year_of_era), // 元号における年数(2桁0詰め)
             ];
+        } else {
+            $params = [
+                'K' => '', // 元号名(漢字)
+                'k' => '', // 元号名(略字)
+                'Q' => '', // 英語表記の元号名
+                'q' => '', // 英語略表記の元号名
+                'x' => '0', // 元号における年数
+                'X' => '00', // 元号における年数(2桁0詰め)
+            ];
         }
 
         // フォーマットパラメータを適用して文字列を取得
-        $formatted_string = TextKit::formatText($format, $params, false);
+        $formatted_string = TextKit::format($format, $params, false);
         return $formatted_string;
     }
 
     /**
      * 元号を判定して返す
-     * @param \DateTimeInterface $datetime 対象の日付と時刻を表す DateTime オブジェクト
+     * @param DateTimeInterface $datetime 対象の日付と時刻を表す DateTime オブジェクト
      * @return array|null 元号の情報。該当する元号がない場合はnullを返す
      */
-    public static function getEraFromDatetime(\DateTimeInterface $datetime): ?array
+    public static function getEra(DateTimeInterface $datetime): ?array
     {
         // 元号一覧
         $era_list = [

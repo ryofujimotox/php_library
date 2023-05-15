@@ -29,8 +29,8 @@ class DateTime extends BaseDateTime
     public function format($format): string
     {
         $clone = $this->cloneBaseDateTime();
-        $format = Wareki::formatWareki($format, $clone);
-        $format = Youbi::formatYoubi($format, $clone);
+        $format = Wareki::format($format, $clone);
+        $format = Youbi::format($format, $clone);
         return parent::format($format);
     }
 
@@ -41,7 +41,7 @@ class DateTime extends BaseDateTime
      */
     public function getEra(): ?array
     {
-        return Wareki::getEraFromDatetime($this->cloneBaseDateTime());
+        return Wareki::getEra($this->cloneBaseDateTime());
     }
 
     /**

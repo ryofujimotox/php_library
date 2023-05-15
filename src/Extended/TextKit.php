@@ -11,7 +11,7 @@ class TextKit
      * @param bool $useBrackets 置換対象のパラメーター名に{}を使用するかどうか。
      * @return string フォーマットされたテキスト。 ( 全集合です(笑)。 )
      */
-    public static function formatText(string $text, array $params, bool $useBrackets = false): string
+    public static function format(string $text, array $params, bool $useBrackets = false): string
     {
         // パラメーターを置換する。
         $replacePairs = [];
