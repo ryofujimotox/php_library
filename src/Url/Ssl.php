@@ -1,5 +1,5 @@
 <?php
-namespace FrUtility\Other;
+namespace FrUtility\Url;
 
 use \DateTime;
 

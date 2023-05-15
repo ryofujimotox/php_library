@@ -2,10 +2,13 @@
 namespace FrUtility\Url;
 
 use FrUtility\Url\Utility;
+use FrUtility\Url\Ssl;
 
 class Url
 {
     private string $url;
+    private string $domain;
+    private $ssl;// SSL情報
 
     /**
      * @param string $url URL文字列
@@ -13,6 +16,19 @@ class Url
     public function __construct(string $url)
     {
         $this->url = $url;
+        $this->domain = Utility::getDomain($this->url);
+    }
+
+    /**
+     * @return Ssl インスタンス
+     */
+    public function getSsl(): Ssl
+    {
+        if (!$this->ssl) {
+            $this->ssl = new Ssl($this->domain);
+        }
+
+        return $this->ssl;
     }
 
     /**
@@ -24,15 +40,13 @@ class Url
     }
 
     /**
-     *
      * 適当なURLからドメインを抜き出す
      *
      * @return string 〇〇.com
-     *
      */
     public function getDomain(): string
     {
-        return Utility::getDomain($this->url);
+        return $this->domain;
     }
 
     /**

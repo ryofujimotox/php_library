@@ -43,3 +43,23 @@ use FrUtility\Url\Url;
 $Url = new Url('https://ryo1999.com');
 $this->assertEquals($Url->getDomain(), 'ryo1999.com');
 ```
+
+#### Url から Ssl へアクセス可能に
+
+```php
+use FrUtility\Url\Url;
+$Url = new Url('https://ryo1999.com');
+$Ssl = $Url->getSsl();
+```
+
+### Ssl のパス変更
+
+```php
+use FrUtility\Other\Ssl;
+```
+
+=>
+
+```php
+use FrUtility\Url\Ssl;
+```
