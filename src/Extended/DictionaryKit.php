@@ -70,4 +70,84 @@ class DictionaryKit
             return $groups;
         }, []);
     }
+
+    /**
+     * 辞書から除外するキーをフィルタリングする
+     *
+     * @param array $excludes 除外するキーの配列 [ 削除する鍵 ]
+     * @param array $dictionary フィルタリングする辞書配列 [ 削除する鍵 => value, 残す鍵 => value2 ]
+     * @return array [ 残す鍵 => value2 ]
+     */
+    public static function filterExcludedKeys(array $excludes, array $dictionary): array
+    {
+        return array_filter($dictionary, function ($key) use ($excludes) {
+            return !in_array($key, $excludes, true);
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * 配列から指定されたキーをフィルタリングする
+     *
+     * @param array $keys フィルタリングするキーの配列
+     * @param array $array フィルタリングされる配列
+     * @return array フィルタリングされた配列
+     */
+    public static function filterByKeys(array $keys, array $array): array
+    {
+        return array_filter(
+            $array,
+            function ($key) use ($keys) {
+                return in_array($key, $keys);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+    }
+
+    /**
+     * 渡された配列の各要素をキーとして、値が元の値と同じになるように新しい連想配列を作成する
+     *
+     * @param array $values キーと値の両方ともに同じ値を持つ配列
+     * @return array 新しい連想配列
+     */
+    public static function createFromValues(array $values): array
+    {
+        return array_combine($values, $values);
+    }
+
+    /**
+     * 多次元配列から指定されたキーに対応する値を抽出する。
+     *
+     * @param array $array 値を抽出する配列。 [test => [1], test2 => [ test => [2, 3] ]]
+     * @param string $key 抽出する値のキー。 "test"
+     * @return array キーに対応する値の配列。キーが存在しない場合は空の配列を返す。 [ 1, 2, 3 ]
+     */
+    public static function extractValueByKey(array $array, string $key)
+    {
+        $search = function ($arrayKey, $arrayValue) use ($key, &$search) {
+            if ($arrayKey === $key) {
+                return $arrayValue;
+            }
+            if (is_array($arrayValue)) {
+                return ArrayKit::flatten(self::array_map_with_key($search, $arrayValue));
+            }
+        };
+        return ArrayKit::flatten(self::array_map_with_key($search, $array));
+    }
+
+    /**
+     * 配列の各要素に指定したコールバック関数を適用した結果を返す。
+     *
+     * @param callable $callback 配列の各要素に適用するコールバック関数。
+     *                           第一引数に配列のキー、第二引数に配列の値が渡される。
+     *                           無名関数($配列鍵, $配列値){ }
+     * @param array $array 適用する配列。
+     * @return array 配列の各要素にコールバック関数を適用した結果。
+     */
+    public static function array_map_with_key(callable $callback, array $array): array
+    {
+        // 配列の各要素にコールバック関数を適用して、$resultに格納する
+        $result = array_map($callback, array_keys($array), $array);
+
+        return $result;
+    }
 }

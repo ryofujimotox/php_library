@@ -82,7 +82,7 @@ class Xlsx
         $spreadsheet->setActiveSheetIndex(0);
 
         // ファイル保存パス取得
-        if(!$filePath){
+        if (!$filePath) {
             $filePath = tempnam(sys_get_temp_dir(), 'tmp');
         }
 

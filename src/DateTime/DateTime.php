@@ -55,4 +55,48 @@ class DateTime extends BaseDateTime
         $cloned = new BaseDateTime(parent::format('Y-m-d H:i:s'));
         return $cloned;
     }
+
+    /**
+     * その日の00時を返す。
+     *
+     * @return string 日時
+     */
+    public function getStartDateTime(): string
+    {
+        return $this->format('Y-m-d 00:00:00');
+    }
+
+    /**
+     * その月の初日を取得する。
+     *
+     * @return DateTime その月の初日
+     */
+    public function getMonthFirstDate(): DateTime
+    {
+        $date = $this->format('Y-m-d H:i:s');
+        return new DateTime(date('Y-m-d', strtotime('first day of ' . $date)));
+    }
+
+    /**
+     * その月の末日を取得する。
+     *
+     * @return DateTime その月の末日
+     */
+    public function getMonthLastDate(): DateTime
+    {
+        $date = $this->format('Y-m-d H:i:s');
+        return new DateTime(date('Y-m-d', strtotime('last day of ' . $date)));
+    }
+
+    /**
+     * 次の日を取得する。
+     *
+     * @return DateTime 次の日
+     */
+    public function getNextDate(): DateTime
+    {
+        $clone = clone $this;
+        $clone->modify('+1 days');
+        return $clone;
+    }
 }
