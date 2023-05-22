@@ -22,10 +22,10 @@ class Url
     /**
      * @return Ssl インスタンス
      */
-    public function getSsl(): Ssl
+    public function getSsl(int $timeout_seconds = 3): Ssl
     {
         if (!$this->ssl) {
-            $this->ssl = new Ssl($this->domain);
+            $this->ssl = new Ssl($this->domain, $timeout_seconds);
         }
 
         return $this->ssl;
