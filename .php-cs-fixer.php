@@ -1,0 +1,105 @@
+<?php
+
+return (new PhpCsFixer\Config())
+    ->setRules([
+        '@PSR2' => true,
+
+        //デフォルト知らない設定
+        'array_indentation' => true,
+        'multiline_whitespace_before_semicolons' => true,
+        'single_quote' => true,
+        // 'binary_operator_spaces' => array(
+        //     'operators' => false,p
+        //     'default' => false,
+        // ),
+        'declare_equal_normalize' => true,
+        'function_typehint_space' => true,
+        // 'single_line_comment_style' => true,
+        'include' => true,
+        'lowercase_cast' => true,
+        'no_spaces_around_offset' => true,
+        'object_operator_without_whitespace' => true,
+        'ternary_operator_spaces' => true,
+        'trim_array_spaces' => true,
+        'unary_operator_spaces' => true,
+        'whitespace_after_comma_in_array' => true,
+
+        //いい設定
+
+        //関数の括弧
+        'braces' => [
+            'allow_single_line_closure' => false,
+            'position_after_anonymous_constructs' => 'same',
+            'position_after_control_structures' => 'same',
+            'position_after_functions_and_oop_constructs' => 'same'
+        ],
+
+        //配列の形   ['syntax' => 'short'],
+        //'array_syntax' => array('syntax' => 'long'),
+
+        //特定の記述の前に一行改行を入れる
+        // 'no_extra_blank_lines' => array(
+        //     'curly_brace_block',
+        //     'extra',
+        //     'parenthesis_brace_block',
+        //     'square_brace_block',
+        //     'throw',
+        //     'use',
+        // ),
+
+        'no_extra_blank_lines' => [
+            'tokens' => [
+                'curly_brace_block',
+                'extra',
+                'parenthesis_brace_block',
+                'square_brace_block',
+                'throw',
+                'use',
+            ]
+        ],
+
+        //namespace前に改行
+        'single_blank_line_before_namespace' => false,
+
+        //isset to unsets 書き方
+        'combine_consecutive_issets' => true,
+        'combine_consecutive_unsets' => true,
+
+        //文字 . 文字　の空白開ける
+        'concat_space' => [
+            'spacing' => 'one'
+        ],
+
+        //elseif 固める
+        'elseif' => true,
+
+        //PHPコードの文字コードをBOMでなくUTF-8
+        'encoding' => true,
+
+        //関数が複数行に渡るときには1行にする
+        'method_argument_space' => [
+            'keep_multiple_spaces_after_comma' => true,
+        ],
+
+        //;; を修正
+        'no_empty_statement' => true,
+
+        //=>の前後で複数行になるスペースを禁止します
+        'no_multiline_whitespace_around_double_arrow' => true,
+
+        //   ; の空白消す
+        'no_singleline_whitespace_before_semicolons' => true,
+
+        //配列内で、カンマの前にスペースを禁止
+        'no_whitespace_before_comma_in_array' => true,
+
+        //空白行でスペースを禁止
+        'no_whitespace_in_blank_line' => true,
+
+        //phpのとじタグを削除しない
+        //'no_closing_tag' => false
+
+        'binary_operator_spaces' => true
+    ])
+    // ->setIndent("\t")
+    ->setLineEnding("\n");
