@@ -67,17 +67,19 @@ class Request
      * 指定されたURLにPOSTリクエストを送信します。
      *
      * @param string $url - リクエストを送信するURL
-     * @param callable $callback - CURLハンドルに対して設定を行うコールバック関数
+     * @param array $data - POST値
      * @return string - リクエストに対するレスポンス
      */
-    public static function post(string $url, callable $callback): string
+    public static function post(string $url, array $data): string
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, true);
 
         // 実行
-        $callback($ch);
+        if ($data) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
@@ -97,15 +99,9 @@ class Request
     {
         //
         $csvPostFunction = function (string $tempPath) use ($url): string {
-            // CURLハンドルに対して設定を行うコールバック関数
-            $csvCallback = function ($ch) use ($tempPath) {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-                    'file' => new \CURLFile($tempPath, 'text/csv', 'data.csv'),
-                ));
-            };
-
             // POSTリクエストを送信し、レスポンスを返す
-            $response = self::post($url, $csvCallback);
+            $postdata = ['file' => new \CURLFile($tempPath, 'text/csv', 'data.csv')];
+            $response = self::post($url, $postdata);
             return (string) $response;
         };
 
