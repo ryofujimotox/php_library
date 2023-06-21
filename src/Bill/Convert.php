@@ -122,7 +122,7 @@ class Convert
                 'amount' => $price_without_tax,
                 'tax' => $tax,
                 // 'discounted_price' => $discounted_price,
-                // 'total_price' => $total_price
+                'max_price' => $total_price
             ];
         }
 
