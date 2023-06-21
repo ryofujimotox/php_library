@@ -103,8 +103,9 @@ class Convert
 
             $discounted_price = $total_price;
             if ($discount_rate) {
-                $discounted_price = $discounted_price - ($discounted_price * $rate / 100);
+                $discounted_price = $discounted_price - ($discounted_price * $discount_rate / 100);
             }
+
             if ($left_discount_amount) {
                 if ($left_discount_amount < $discounted_price) {
                     $discounted_price = $discounted_price - $left_discount_amount;
@@ -121,7 +122,7 @@ class Convert
                 'rate' => $rate,
                 'amount' => $price_without_tax,
                 'tax' => $tax,
-                // 'discounted_price' => $discounted_price,
+                'discounted_price' => $discounted_price,
                 'max_price' => $total_price
             ];
         }
