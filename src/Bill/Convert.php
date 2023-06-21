@@ -13,20 +13,28 @@ class Convert
      *
      * @return array $billData 注文と税金の詳細を含む請求書データ
      */
-    public function convertBillData(array $orders): array
+    public function convertBillData(array $orders, array $setting = []): array
     {
+        $setting = array_merge(
+            [
+                'already_include_tax' => true,
+                'discount_rate' => 0,
+                'discount_amount' => 0,
+            ],
+            $setting
+        );
+
         // 初期値設定と単価、価格の計算
         $orders = $this->calculateOrderPrices($orders);
 
         // 税率ごとに集計する
-        $taxes = $this->groupTaxes($orders);
+        $taxes = $this->groupTaxes($orders, $setting);
 
         // 請求書データの組み立て
         $billData = [
             'orders' => $orders,
             'taxes' => $taxes
         ];
-
         return $billData;
     }
 
@@ -69,19 +77,55 @@ class Convert
      *
      * @return array $taxes 各税金の詳細情報を含む配列
      */
-    public function groupTaxes(array $orders): array
+    public function groupTaxes(array $orders, $setting = []): array
     {
+        $setting = array_merge(
+            [
+                'already_include_tax' => true,
+                'discount_rate' => 0,
+                'discount_amount' => 0,
+            ],
+            $setting
+        );
+
+        //
         $taxes = [];
         $taxGroupedOrders = DictionaryKit::groupup($orders, 'tax', null);
-        foreach ($taxGroupedOrders as $taxRate => $orderGroup) {
-            $amount = array_sum(array_column($orderGroup, 'price'));
-            $taxes[] = [
-                'rate' => $taxRate,
-                'amount' => $amount,
-                'tax' => $amount * $taxRate / 100
+
+        //
+        $discount_rate = $setting['discount_rate'] ?? 0;
+        $left_discount_amount = $setting['discount_amount'] ?? 0;
+
+        //
+        $result = [];
+        foreach ($taxGroupedOrders as $rate => $_order) {
+            $total_price = array_sum(array_column($_order, 'price'));
+
+            $discounted_price = $total_price;
+            if ($discount_rate) {
+                $discounted_price = $discounted_price - ($discounted_price * $rate / 100);
+            }
+            if ($left_discount_amount) {
+                if ($left_discount_amount < $discounted_price) {
+                    $discounted_price = $discounted_price - $left_discount_amount;
+                    $left_discount_amount = 0;
+                } else {
+                    $left_discount_amount = $left_discount_amount - $discounted_price;
+                    $discounted_price = 0;
+                }
+            }
+
+            $price_without_tax = (int) round($discounted_price / (1 + ($rate / 100)));
+            $tax = (int) $discounted_price - $price_without_tax;
+            $result[] = [
+                'rate' => $rate,
+                'amount' => $price_without_tax,
+                'tax' => $tax,
+                // 'discounted_price' => $discounted_price,
+                // 'total_price' => $total_price
             ];
         }
 
-        return $taxes;
+        return $result;
     }
 }
