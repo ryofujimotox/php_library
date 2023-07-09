@@ -54,7 +54,7 @@ class Convert
                     'quantity' => 0,
                     'unit_price' => 0,
                     'price' => 0,
-                    'tax' => 0
+                    'tax_rate' => 0
                 ],
                 $order
             );
@@ -89,8 +89,7 @@ class Convert
         );
 
         //
-        $taxes = [];
-        $taxGroupedOrders = DictionaryKit::groupup($orders, 'tax', null);
+        $taxGroupedOrders = DictionaryKit::groupup($orders, 'tax_rate', null);
 
         //
         $discount_rate = $setting['discount_rate'] ?? 0;

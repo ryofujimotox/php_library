@@ -78,7 +78,7 @@ class Request
 
         // 実行
         if ($data) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
